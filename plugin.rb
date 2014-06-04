@@ -23,6 +23,7 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
     result.name = auth[:info].name
     result.username = uid
     result.email = auth[:info].email
+    result.email_valid = true
 
     current_info = ::PluginStore.get("crowd", "crowd_user_#{uid}")
     if current_info
