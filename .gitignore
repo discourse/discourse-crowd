@@ -17,3 +17,6 @@ tmp
 _yardoc
 doc/
 
+*.swp
+auto_generated
+gems
