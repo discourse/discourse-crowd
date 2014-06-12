@@ -44,7 +44,7 @@ button_title = GlobalSetting.try(:crowd_title) || "with Crowd"
 
 auth_provider :title => button_title,
               :authenticator => CrowdAuthenticator.new('crowd'),
-              :message => 'Authorizing with #{title} (make sure pop up blockers are not enabled)',
+              :message => "Authorizing with #{title} (make sure pop up blockers are not enabled)",
               :frame_width => 600,
               :frame_height => 350,
               :background_color => '#003366'
