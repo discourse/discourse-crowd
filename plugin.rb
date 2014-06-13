@@ -9,6 +9,18 @@ gem "omniauth_crowd", "2.2.2"
 
 class CrowdAuthenticator < ::Auth::OAuth2Authenticator
   def register_middleware(omniauth)
+    OmniAuth::Strategies::Crowd.class_eval do
+      def get_credentials
+        OmniAuth::Form.build(:title => (options[:title] || "Crowd Authentication")) do
+          text_field 'Login', 'username'
+          password_field 'Password', 'password'
+
+          if GlobalSetting.respond_to?(:crowd_custom_html)
+            html GlobalSetting.crowd_custom_html
+          end
+        end.to_response
+      end
+    end
     omniauth.provider :crowd,
                       :name => 'crowd',
                       :crowd_server_url => GlobalSetting.crowd_server_url,
@@ -46,5 +58,5 @@ auth_provider :title => button_title,
               :authenticator => CrowdAuthenticator.new('crowd'),
               :message => "Authorizing with #{title} (make sure pop up blockers are not enabled)",
               :frame_width => 600,
-              :frame_height => 350,
+              :frame_height => 380,
               :background_color => '#003366'
