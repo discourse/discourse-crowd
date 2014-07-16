@@ -87,10 +87,10 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
 
   def initialize(provider)
     super(provider)
-    if "separated" == GlobalSetting.crowd_plugin_mode
-      @mode = CrowdAuthenticatorModeSeparated.new
-    else
+    if (defined? GlobalSetting.crowd_plugin_mode) && "mixed" == GlobalSetting.crowd_plugin_mode
       @mode = CrowdAuthenticatorModeMixed.new
+    else
+      @mode = CrowdAuthenticatorModeSeparated.new
     end
   end
 
