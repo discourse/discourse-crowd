@@ -7,63 +7,61 @@ require_dependency 'auth/oauth2_authenticator'
 
 gem "omniauth_crowd", "2.2.2"
 
+# mode of crowd authentication, how the discourse will behave after the user types in the
+# credentials
 class CrowdAuthenticatorMode
 
-  attr_accessor :after_authenticate, :after_create_account
-
-  # this is mode where when the user will create an account locally in the discourse,
-  # not using any provider, then the account won't be accessible by the crowd authentication method,
-  # that means you cannot log in by crowd in locally created account
-  def self.separated
-    mode = CrowdAuthenticatorMode.new
-
-    mode.after_authenticate = lambda do |auth|
-      result = Auth::Result.new
-      uid = auth[:uid]
-      result.name = auth[:info].name
-      result.username = uid
-      result.email = auth[:info].email
-      result.email_valid = true
-      current_info = ::PluginStore.get("crowd", "crowd_user_#{uid}")
-      if current_info
-        result.user = User.where(id: current_info[:user_id]).first
-      end
-      result.extra_data = { crowd_user_id: uid }
-      result
-    end
-
-    mode.after_create_account = lambda do |user, auth|
-      ::PluginStore.set("crowd", "crowd_user_#{auth[:extra_data][:crowd_user_id]}", {user_id: user.id })
-    end
-
-    mode
-
+  def after_create_account(user, auth)
   end
 
-  # mode of authentication, where user can access the locally created account with the
-  # crowd authentication method, is the opposity of `separated`
-  def self.mixed
-    mode = CrowdAuthenticatorMode.new
+end
 
-    mode.after_authenticate = lambda do |auth|
-      crowd_uid = auth[:uid]
-      crowd_info = auth[:info]
-      result = Auth::Result.new
-      result.email_valid = true
-      result.user = User.where(username: crowd_uid).first
-      if (!result.user)
-        result.user = User.new
-        result.user.name = crowd_info.name
-        result.user.username = crowd_uid
-        result.user.email = crowd_info.email
-        result.user.save
-      end
-      result
+# this is mode where when the user will create an account locally in the discourse,
+# not using any provider, then the account won't be accessible by the crowd authentication method,
+# that means you cannot log in by crowd in locally created account
+class CrowdAuthenticatorModeSeparated < CrowdAuthenticatorMode
+
+  def after_authenticate(auth)
+    result = Auth::Result.new
+    uid = auth[:uid]
+    result.name = auth[:info].name
+    result.username = uid
+    result.email = auth[:info].email
+    result.email_valid = true
+    current_info = ::PluginStore.get("crowd", "crowd_user_#{uid}")
+    if current_info
+      result.user = User.where(id: current_info[:user_id]).first
     end
-
-    mode.after_create_account = lambda do |user, auth| ; end
-    mode
+    result.extra_data = { crowd_user_id: uid }
+    result
   end
+
+  def after_create_account(user, auth)
+    ::PluginStore.set("crowd", "crowd_user_#{auth[:extra_data][:crowd_user_id]}", {user_id: user.id })
+  end
+
+end
+
+# mode of authentication, where user can access the locally created account with the
+# crowd authentication method, is the opposity of `separated`
+class CrowdAuthenticatorModeMixed < CrowdAuthenticatorMode
+
+  def after_authenticate(auth)
+    crowd_uid = auth[:uid]
+    crowd_info = auth[:info]
+    result = Auth::Result.new
+    result.email_valid = true
+    result.user = User.where(username: crowd_uid).first
+    if (!result.user)
+      result.user = User.new
+      result.user.name = crowd_info.name
+      result.user.username = crowd_uid
+      result.user.email = crowd_info.email
+      result.user.save
+    end
+    result
+  end
+
 end
 
 class CrowdAuthenticator < ::Auth::OAuth2Authenticator
@@ -90,18 +88,18 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
   def initialize(provider)
     super(provider)
     if "separated" == GlobalSetting.crowd_plugin_mode
-      @mode = CrowdAuthenticatorMode.separated
+      @mode = CrowdAuthenticatorModeSeparated.new
     else
-      @mode = CrowdAuthenticatorMode.mixed
+      @mode = CrowdAuthenticatorModeMixed.new
     end
   end
 
   def after_authenticate(auth)
-    @mode.after_authenticate.call(auth)
+    @mode.after_authenticate(auth)
   end
 
   def after_create_account(user, auth)
-    @mode.after_create_account.call(user, auth)
+    @mode.after_create_account(user, auth)
   end
 
 end
