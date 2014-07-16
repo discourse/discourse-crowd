@@ -40,6 +40,30 @@ class CrowdAuthenticatorMode
 
   end
 
+  # mode of authentication, where user can access the locally created account with the
+  # crowd authentication method, is the opposity of `separated`
+  def self.mixed
+    mode = CrowdAuthenticatorMode.new
+
+    mode.after_authenticate = lambda do |auth|
+      crowd_uid = auth[:uid]
+      crowd_info = auth[:info]
+      result = Auth::Result.new
+      result.email_valid = true
+      result.user = User.where(username: crowd_uid).first
+      if (!result.user)
+        result.user = User.new
+        result.user.name = crowd_info.name
+        result.user.username = crowd_uid
+        result.user.email = crowd_info.email
+        result.user.save
+      end
+      result
+    end
+
+    mode.after_create_account = lambda do |user, auth| ; end
+    mode
+  end
 end
 
 class CrowdAuthenticator < ::Auth::OAuth2Authenticator
@@ -65,7 +89,10 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
 
   def initialize(provider)
     super(provider)
+    if "separated" == GlobalSetting.crowd_plugin_mode
       @mode = CrowdAuthenticatorMode.separated
+    else
+      @mode = CrowdAuthenticatorMode.mixed
     end
   end
 
