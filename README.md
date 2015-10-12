@@ -2,7 +2,22 @@
 
 A Discourse Plugin to enable authentication via Atlassian Crowd.
 
-### Configuration
+
+### Configuration For Docker Installations Of Crowd
+
+Add the following to the 'env' section of your container/<app>.yml
+
+
+`  #Support For Crowd Plugin`  
+`  #Mode should be either 'separated' or 'mixed'`  
+`  DISCOURSE_CROWD_SERVER_URL: <SERVER URL>`  
+`  DISCOURSE_CROWD_APPLICATION_NAME: <USER_NAME>`  
+`  DISCOURSE_CROWD_APPLICATION_PASSWORD: <PASSWORD>`  
+`  DISCOURSE_CROWD_APPLICATION_MODE: <MODE>`  
+
+
+
+### Configuration For Non Docker Installations
 
 Add the following settings to your `discourse.conf` file:
 
