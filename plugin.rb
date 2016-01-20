@@ -28,10 +28,15 @@ class CrowdAuthenticatorModeSeparated < CrowdAuthenticatorMode
     result.username = uid
     result.email = auth[:info].email
     result.email_valid = true
+
     current_info = ::PluginStore.get("crowd", "crowd_user_#{uid}")
     if current_info
       result.user = User.where(id: current_info[:user_id]).first
     end
+
+    # If no link exists try by email
+    result.user ||= User.where(email: result.email).first
+
     result.extra_data = { crowd_user_id: uid }
     result
   end
