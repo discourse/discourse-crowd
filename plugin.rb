@@ -73,7 +73,7 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
   def register_middleware(omniauth)
     OmniAuth::Strategies::Crowd.class_eval do
       def get_credentials
-        OmniAuth::Form.build(:title => (options[:popup_title] || "Crowd Authentication")) do
+        OmniAuth::Form.build(:title => (GlobalSetting.try(:crowd_popup_title) || GlobalSetting.try(:crowd_title) || "Crowd Authentication")) do
           text_field 'Login', 'username'
           password_field 'Password', 'password'
 
@@ -113,7 +113,6 @@ title = GlobalSetting.try(:crowd_title) || "Crowd"
 button_title = GlobalSetting.try(:crowd_title) || "with Crowd"
 
 auth_provider :title => button_title,
-              :popup_title => GlobalSetting.try(:crowd_popup_title) || GlobalSetting.try(:crowd_title),
               :authenticator => CrowdAuthenticator.new('crowd'),
               :message => "Authorizing with #{title} (make sure pop up blockers are not enabled)",
               :frame_width => 600,
