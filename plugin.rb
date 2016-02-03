@@ -76,6 +76,7 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
         OmniAuth::Form.build(:title => (GlobalSetting.try(:crowd_popup_title) || GlobalSetting.try(:crowd_title) || "Crowd Authentication")) do
           text_field 'Login', 'username'
           password_field 'Password', 'password'
+          button 'Login'
 
           if GlobalSetting.respond_to?(:crowd_custom_html)
             html GlobalSetting.crowd_custom_html
