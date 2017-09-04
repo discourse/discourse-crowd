@@ -86,9 +86,9 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
     end
     omniauth.provider :crowd,
                       :name => 'crowd',
-                      :crowd_server_url => GlobalSetting.crowd_server_url,
-                      :application_name => GlobalSetting.crowd_application_name,
-                      :application_password => GlobalSetting.crowd_application_password
+                      :crowd_server_url => GlobalSetting.try(:crowd_server_url),
+                      :application_name => GlobalSetting.try(:crowd_application_name),
+                      :application_password => GlobalSetting.try(:crowd_application_password)
   end
 
   def initialize(provider)
