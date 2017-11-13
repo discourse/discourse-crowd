@@ -35,7 +35,7 @@ class CrowdAuthenticatorModeSeparated < CrowdAuthenticatorMode
     end
 
     # If no link exists try by email
-    result.user ||= User.find_by_email(result.email).first
+    result.user ||= User.find_by_email(result.email)
 
     result.extra_data = { crowd_user_id: uid }
     result
