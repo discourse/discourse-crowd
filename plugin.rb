@@ -108,6 +108,10 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
     @mode.after_create_account(user, auth)
   end
 
+  def enabled?
+    true
+  end
+
 end
 
 title = GlobalSetting.try(:crowd_title) || "Crowd"
