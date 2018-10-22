@@ -42,7 +42,7 @@ class CrowdAuthenticatorModeSeparated < CrowdAuthenticatorMode
   end
 
   def after_create_account(user, auth)
-    ::PluginStore.set("crowd", "crowd_user_#{auth[:extra_data][:crowd_user_id]}", {user_id: user.id })
+    ::PluginStore.set("crowd", "crowd_user_#{auth[:extra_data][:crowd_user_id]}", user_id: user.id)
   end
 
 end
@@ -73,7 +73,7 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
   def register_middleware(omniauth)
     OmniAuth::Strategies::Crowd.class_eval do
       def get_credentials
-        OmniAuth::Form.build(:title => (GlobalSetting.try(:crowd_popup_title) || GlobalSetting.try(:crowd_title) || "Crowd Authentication")) do
+        OmniAuth::Form.build(title: (GlobalSetting.try(:crowd_popup_title) || GlobalSetting.try(:crowd_title) || "Crowd Authentication")) do
           text_field 'Login', 'username'
           password_field 'Password', 'password'
           button 'Login'
@@ -85,10 +85,10 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
       end
     end
     omniauth.provider :crowd,
-                      :name => 'crowd',
-                      :crowd_server_url => GlobalSetting.try(:crowd_server_url),
-                      :application_name => GlobalSetting.try(:crowd_application_name),
-                      :application_password => GlobalSetting.try(:crowd_application_password)
+                      name: 'crowd',
+                      crowd_server_url: GlobalSetting.try(:crowd_server_url),
+                      application_name: GlobalSetting.try(:crowd_application_name),
+                      application_password: GlobalSetting.try(:crowd_application_password)
   end
 
   def initialize(provider)
@@ -121,9 +121,9 @@ end
 title = GlobalSetting.try(:crowd_title) || "Crowd"
 button_title = GlobalSetting.try(:crowd_title) || "with Crowd"
 
-auth_provider :title => button_title,
-              :authenticator => CrowdAuthenticator.new('crowd'),
-              :message => "Authorizing with #{title} (make sure pop up blockers are not enabled)",
-              :frame_width => 600,
-              :frame_height => 410,
-              :background_color => '#003366'
+auth_provider title: button_title,
+              authenticator: CrowdAuthenticator.new('crowd'),
+              message: "Authorizing with #{title} (make sure pop up blockers are not enabled)",
+              frame_width: 600,
+              frame_height: 410,
+              background_color: '#003366'
