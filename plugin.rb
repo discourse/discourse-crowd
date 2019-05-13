@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # name: discourse-crowd
 # about: Atlassian Crowd Login Provider
 # version: 0.1
