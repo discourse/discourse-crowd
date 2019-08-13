@@ -7,7 +7,7 @@
 
 require_dependency 'auth/oauth2_authenticator'
 
-gem "omniauth_crowd", "2.2.2"
+gem "omniauth_crowd", "2.2.3"
 
 # mode of crowd authentication, how the discourse will behave after the user types in the
 # credentials
@@ -75,9 +75,19 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
   def register_middleware(omniauth)
     OmniAuth::Strategies::Crowd.class_eval do
       def get_credentials
+        if defined?(CSRFTokenVerifier) &&
+            CSRFTokenVerifier.method_defined?(:form_authenticity_token)
+          token = begin
+            verifier = CSRFTokenVerifier.new
+            verifier.call(env)
+            verifier.form_authenticity_token
+          end
+        end
+
         OmniAuth::Form.build(title: (GlobalSetting.try(:crowd_popup_title) || GlobalSetting.try(:crowd_title) || "Crowd Authentication")) do
           text_field 'Login', 'username'
           password_field 'Password', 'password'
+          html "\n<input type='hidden' name='authenticity_token' value='#{token}'/>" if token
           button 'Login'
 
           if GlobalSetting.respond_to?(:crowd_custom_html)
