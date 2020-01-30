@@ -73,6 +73,8 @@ end
 
 class CrowdAuthenticator < ::Auth::OAuth2Authenticator
   def register_middleware(omniauth)
+    return unless GlobalSetting.try(:crowd_server_url).present?
+
     OmniAuth::Strategies::Crowd.class_eval do
       def get_credentials
         if defined?(CSRFTokenVerifier) &&
