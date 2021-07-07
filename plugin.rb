@@ -132,11 +132,5 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
 
 end
 
-title = GlobalSetting.try(:crowd_title) || "Crowd"
-button_title = GlobalSetting.try(:crowd_title) || "with Crowd"
-
-auth_provider title: button_title,
-              authenticator: CrowdAuthenticator.new('crowd'),
-              message: "Authorizing with #{title} (make sure pop up blockers are not enabled)",
-              frame_width: 600,
-              frame_height: 410
+auth_provider title: GlobalSetting.try(:crowd_title),
+              authenticator: CrowdAuthenticator.new('crowd')
