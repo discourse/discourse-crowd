@@ -1,3 +1,8 @@
 en:
   site_settings:
-    crowd_verbose_log: 'enable verbose logging of crowd auth payload'
+    crowd_verbose_log: 'Enable verbose logging of crowd auth payload'
+    crowd_validate_email: 'Whether new users created from a crowd login have a validated email address or not'
+    crowd_groups_enabled: "Enable group membership from crowd settings"
+    crowd_groups_mapping: "Mappings of crowd group names to comma-separated list of discourse group names, e.g. jira-developers:discourse_devgroup_members,discourse_usergroup_moderators"
+    crowd_groups_remove_unmapped_groups: "If user is not in a mapped crowd group, remove existing membership of corresponding discourse group"
+

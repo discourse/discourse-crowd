@@ -1,2 +1,14 @@
 plugins:
-  crowd_verbose_log: false
+  crowd_verbose_log:
+    default: false
+  crowd_validate_email:
+    default: false
+  crowd_groups_enabled:
+    default: true
+    client: true
+  crowd_groups_mapping:
+    default: ""
+    type: list
+    list_type: simple
+  crowd_groups_remove_unmapped_groups:
+    default: true
