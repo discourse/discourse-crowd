@@ -18,15 +18,14 @@ class CrowdAuthenticatorMode
 
   def set_groups(user, auth)
     return unless SiteSetting.crowd_groups_enabled
-    Rails.logger.debug("DEBUG: auth: '#{auth.inspect}'")
     user_crowd_groups = ( auth[:info] && auth[:info].groups ) ? auth[:info].groups : nil
-    group_map = Hash.new
-    check_groups = Hash.new
-    SiteSetting.crowd_groups_mapping.split("|").each { |map|
+    group_map = {}
+    check_groups = {}
+    SiteSetting.crowd_groups_mapping.split("|").each do |map|
       keyval = map.split(":", 2)
       group_map[keyval[0]] = keyval[1]
       check_groups[keyval[1]] = 0
-    }
+    end
     if !(user_crowd_groups == nil || group_map.empty?)
       user_crowd_groups.each { |user_crowd_group|
         if group_map.has_key?(user_crowd_group) || !SiteSetting.crowd_groups_remove_unmapped_groups

@@ -2,9 +2,9 @@ plugins:
   crowd_verbose_log:
     default: false
   crowd_validate_email:
-    default: false
-  crowd_groups_enabled:
     default: true
+  crowd_groups_enabled:
+    default: false
     client: true
   crowd_groups_mapping:
     default: ""
