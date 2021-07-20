@@ -18,7 +18,7 @@ class CrowdAuthenticatorMode
 
   def set_groups(user, auth)
     return unless SiteSetting.crowd_groups_enabled
-    user_crowd_groups = ( auth[:info] && auth[:info].groups ) ? auth[:info].groups : nil
+    user_crowd_groups = (auth[:info] && auth[:info].groups) ? auth[:info].groups : nil
     group_map = {}
     check_groups = {}
     SiteSetting.crowd_groups_mapping.split("|").each do |map|
@@ -69,7 +69,7 @@ class CrowdAuthenticatorModeSeparated < CrowdAuthenticatorMode
     result.name = auth[:info].name
     result.username = uid
     result.email = auth[:info].email
-# Allow setting to decide whether to validate email or not. Some Jira setups don't.
+    # Allow setting to decide whether to validate email or not. Some Jira setups don't.
     result.email_valid = SiteSetting.crowd_validate_email
 
     current_info = ::PluginStore.get("crowd", "crowd_user_#{uid}")
@@ -104,7 +104,7 @@ class CrowdAuthenticatorModeMixed < CrowdAuthenticatorMode
     crowd_uid = auth[:uid]
     crowd_info = auth[:info]
     result = Auth::Result.new
-# Allow setting to decide whether to validate email or not. Some Jira setups don't.
+    # Allow setting to decide whether to validate email or not. Some Jira setups don't.
     result.email_valid = SiteSetting.crowd_validate_email
     result.user = User.where(username: crowd_uid).first
     if (!result.user)
@@ -142,7 +142,6 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
           end
         end
 
-        
         if (defined? GlobalSetting.crowd_custom_css)
           if (defined? GlobalSetting.crowd_css_replace) && "true" == GlobalSetting.crowd_css_replace
             OmniAuth.config.form_css = GlobalSetting.crowd_custom_css
