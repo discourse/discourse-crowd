@@ -25,7 +25,17 @@ Add the following settings to your `discourse.conf` file:
 - `crowd_application_name`
 - `crowd_application_password`
 - `crowd_application_mode` - can be one of `separated` or `mixed`
+- `crowd_validate_email` - uncheck this if your Crowd accounts do NOT validate email addresses.  This will force discourse to validate the email.
 
+  
+### Configuring Atlassian Group mappings
+
+This part of the configuration allows users who login through discourse-crowd to automatically be added or removed from Discourse groups (at login time).
+These can be configured by searching for `plugin:discourse-crowd` in Settings.
+- `crowd_groups_enabled` turns crowd mapping on or off
+- `crowd_groups_mapping` is a list of colon-separated pairs. The first of each pair is an Atlassian group and the second is a comma-separated list of discourse group "slugs" (the group name in the URL). e.g. `jira-users:git_group,user_group`
+- `crowd_groups_remove_unmapped_groups` when enabled means a user will be _removed_ from the discourse group(s) that are mapped to if the user is _not_ in the corresponding Atlassian group.  You probably want this on, but because it might be wrongly removing users it's off by default.
+  
 ### License
 
 MIT
