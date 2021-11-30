@@ -127,7 +127,12 @@ class CrowdAuthenticatorModeMixed < CrowdAuthenticatorMode
   end
 end
 
-class CrowdAuthenticator < ::Auth::OAuth2Authenticator
+class ::Auth::CrowdAuthenticator < ::Auth::OAuth2Authenticator
+  # The discourse.conf file doesn't handle strings with single quotes in them.
+  # Therefore we can't use the GlobalSetting interface, and need to reach directly for the ENV.
+  # Not ideal, and can possibly be improved in future updates of 'launcher', and the discourse.conf file.
+  CROWD_HTML = ENV["DISCOURSE_CROWD_CUSTOM_HTML"]
+
   def register_middleware(omniauth)
     return unless GlobalSetting.try(:crowd_server_url).present?
 
@@ -155,8 +160,8 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
           html "\n<input type='hidden' name='authenticity_token' value='#{token}'/>" if token
           button 'Login'
 
-          if GlobalSetting.respond_to?(:crowd_custom_html)
-            html GlobalSetting.crowd_custom_html
+          if ::Auth::CrowdAuthenticator::CROWD_HTML
+            html ::Auth::CrowdAuthenticator::CROWD_HTML
           end
         end.to_response
       end
@@ -195,4 +200,4 @@ class CrowdAuthenticator < ::Auth::OAuth2Authenticator
 end
 
 auth_provider title: GlobalSetting.try(:crowd_title),
-              authenticator: CrowdAuthenticator.new('crowd')
+              authenticator: ::Auth::CrowdAuthenticator.new('crowd')
