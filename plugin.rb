@@ -5,8 +5,6 @@
 # version: 0.1
 # author: Robin Ward
 
-require_dependency 'auth/oauth2_authenticator'
-
 gem "omniauth_crowd", "2.2.3"
 
 # mode of crowd authentication, how the discourse will behave after the user types in the
@@ -127,7 +125,7 @@ class CrowdAuthenticatorModeMixed < CrowdAuthenticatorMode
   end
 end
 
-class ::Auth::CrowdAuthenticator < ::Auth::OAuth2Authenticator
+class ::Auth::CrowdAuthenticator < ::Auth::Authenticator
   # The discourse.conf file doesn't handle strings with single quotes in them.
   # Therefore we can't use the GlobalSetting interface, and need to reach directly for the ENV.
   # Not ideal, and can possibly be improved in future updates of 'launcher', and the discourse.conf file.
@@ -173,8 +171,7 @@ class ::Auth::CrowdAuthenticator < ::Auth::OAuth2Authenticator
                       application_password: GlobalSetting.try(:crowd_application_password)
   end
 
-  def initialize(provider)
-    super(provider)
+  def initialize
     if (defined? GlobalSetting.crowd_plugin_mode) && "mixed" == GlobalSetting.crowd_plugin_mode
       @mode = CrowdAuthenticatorModeMixed.new
     else
@@ -197,7 +194,11 @@ class ::Auth::CrowdAuthenticator < ::Auth::OAuth2Authenticator
   def enabled?
     true
   end
+
+  def name
+    'crowd'
+  end
 end
 
 auth_provider title: GlobalSetting.try(:crowd_title),
-              authenticator: ::Auth::CrowdAuthenticator.new('crowd')
+              authenticator: ::Auth::CrowdAuthenticator.new
