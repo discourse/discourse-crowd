@@ -131,6 +131,10 @@ class ::Auth::CrowdAuthenticator < ::Auth::Authenticator
   # Not ideal, and can possibly be improved in future updates of 'launcher', and the discourse.conf file.
   CROWD_HTML = ENV["DISCOURSE_CROWD_CUSTOM_HTML"]
 
+  def name
+    "crowd"
+  end
+
   def register_middleware(omniauth)
     return unless GlobalSetting.try(:crowd_server_url).present?
 
