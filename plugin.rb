@@ -98,10 +98,6 @@ class CrowdAuthenticatorModeSeparated < CrowdAuthenticatorMode
     ::PluginStore.set("crowd", "crowd_user_#{auth[:extra_data][:crowd_user_id]}", user_id: user.id)
     set_groups(user, auth)
   end
-
-  def set_groups(user, auth)
-    super(user, auth)
-  end
 end
 
 # mode of authentication, where user can access the locally created account with the
@@ -127,10 +123,6 @@ class CrowdAuthenticatorModeMixed < CrowdAuthenticatorMode
 
   def after_create_account(user, auth)
     set_groups(user, auth)
-  end
-
-  def set_groups(user, auth)
-    super(user, auth)
   end
 end
 
@@ -212,10 +204,6 @@ class ::Auth::CrowdAuthenticator < ::Auth::Authenticator
 
   def enabled?
     true
-  end
-
-  def name
-    "crowd"
   end
 end
 
