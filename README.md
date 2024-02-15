@@ -1,3 +1,5 @@
+# ⚠️ This plugin is no longer supported
+
 ### discourse-crowd
 
 A Discourse Plugin to enable authentication via Atlassian Crowd.
