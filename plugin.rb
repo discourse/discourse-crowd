@@ -7,8 +7,10 @@
 
 gem "omniauth_crowd", "2.2.3"
 
-AdminDashboardData.add_problem_check do
-  "The discourse-crowd plugin is no longer supported. Check https://meta.discourse.org/tag/auth-plugins for alternatives."
+after_initialize do
+  AdminDashboardData.add_problem_check do
+    "The discourse-crowd plugin is no longer supported. Check https://meta.discourse.org/tag/auth-plugins for alternatives."
+  end
 end
 
 # mode of crowd authentication, how the discourse will behave after the user types in the
